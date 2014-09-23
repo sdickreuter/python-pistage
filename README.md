@@ -1,7 +1,7 @@
 python-pistage
 ==============
 
-**This software is not associated with Ocean Optics. Use it at your own risk.**
+**This software is not associated with PI. Use it at your own risk.**
 
 ## PI nano Pizeo Stage Controller python module ##
 
