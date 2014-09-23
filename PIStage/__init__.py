@@ -1,4 +1,4 @@
 __author__ = 'sei'
 
-from _base import PIStage
-from _base import PIStage_Dummy
+from PIStage.Controllers.E545 import E545
+from PIStage.Controllers.Dummy import Dummy
