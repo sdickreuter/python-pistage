@@ -10,7 +10,7 @@ Controllers. PI also distributes a bindings for their c++ library, but this pyth
 the simple Serial Interface most controllers provide, which is more straightforward to use (IMHO).
 
 **If you are not 100% sure what you are doing, stick with
-the software supplied by PI.
+the software supplied by PI.**
 
 ## Status ##
 
@@ -28,4 +28,4 @@ print stage.pos()
 
 ## Contributing ##
 
-If you own any of the spectrometers listed below, feel free to contribute.
+Feel free to contribute :)
