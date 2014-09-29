@@ -11,20 +11,12 @@ class Controller(object):
     _z = 0
     _serial = None
 
-    def __init__(self, port=None):
+    def __init__(self):
         try:
-            if port is None:
-                self._serial = serial.Serial(d.DEFAULT_SERIAL, d.DEFAULT_BAUDRATE, timeout=0.1)
-            else:
-                self._serial = serial.Serial(port, d.DEFAULT_BAUDRATE, timeout=1)
+            self._serial = serial.Serial(d.DEFAULT_SERIAL, d.DEFAULT_BAUDRATE, timeout=0.1)
         except:
-            self._serial.close()
+            if self._serial is not None: self._serial.close()
             raise RuntimeError('Could not open serial connection')
-
-        if self._serial is None:
-            raise RuntimeError('Could not open serial connection')
-
-
 
     def pos(self):
         pass

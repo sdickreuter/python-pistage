@@ -5,14 +5,16 @@ from PIStage._base import Controller
 class E545(Controller):
 
     def __init__(self, port=None):
-        super(E545, self).__init__(self)
+        super(E545, self).__init__()
 
         self._serial.write('ONL 1 1 2 1 3 1\r')
         self._serial.write('SVO A 1 B 1 C 1\r')
         self._serial.write('DCO A 1 B 1 C 1\r')
 
-        print('NanoControl initialized on port %s' %self._serial.name)
+        print('PIStage initialized on port %s' %self._serial.name)
         print('All Channels in Online Mode, Servo Control on, Drift Compensation on')
+
+        self.moveabs(10,10,10)
 
         _x, _y, _z = self.pos()
 
@@ -30,23 +32,39 @@ class E545(Controller):
     def moveabs(self, x=None, y=None, z=None):
         com = 'MOV '
         if x is not None:
-            com += 'A '+x
+            if (x > 0) & (x < 200) :
+                com += 'A '+str(round(x,4))
+                self._x = x
         if y is not None:
-            com += 'B '+y
+            if (y > 0) & (y < 200) :
+                if len(com) > 4: com+= ' '
+                com += 'B '+str(round(y,4))
+                self._y = y
         if z is not None:
-            com += 'C '+z
-
+            if (z > 0) & (z < 200) :
+                if len(com) > 4: com+= ' '
+                com += 'C '+str(round(z,4))
+                self._z = z
+        print(com)
         if len(com) > 4:
             self._serial.write(com+"\r")
 
     def moverel(self, dx=None, dy=None, dz=None):
         com = 'MVR '
         if dx is not None:
-            com += 'A '+dx
+            if ((self._x+dx) > 0) & ((self._x+dx) < 200) :
+                com += 'A '+str(round(dx,4))
+                self._x += dx
         if dy is not None:
-            com += 'B '+dy
+            if ((self._y+dy) > 0) & ((self._y+dy) < 200) :
+                if len(com) > 4: com+= ' '
+                com += 'B '+str(round(dy,4))
+                self._y += dy
         if dz is not None:
-            com += 'C '+dz
+            if ((self._z+dz) > 0) & ((self._z+dz) < 200) :
+                if len(com) > 4: com+= ' '
+                com += 'C '+str(round(dz,4))
+                self._z += dz
 
         if len(com) > 4:
             self._serial.write(com+"\r")

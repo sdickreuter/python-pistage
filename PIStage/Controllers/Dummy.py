@@ -10,7 +10,7 @@ class Dummy(Controller):
 
     def pos(self):
         time.sleep(0.05)
-        return 0.1,0.1,0.1
+        return 10,10,10
 
     def moveabs(self, x=None, y=None, z=None):
         time.sleep(0.05)
