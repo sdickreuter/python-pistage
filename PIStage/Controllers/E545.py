@@ -50,7 +50,6 @@ class E545(Controller):
                 if len(com) > 4: com+= ' '
                 com += 'C '+str(round(z,4))
                 self._z = z
-        print(com)
         if len(com) > 4:
             try:
                 self._sock.send(com+"\n")
