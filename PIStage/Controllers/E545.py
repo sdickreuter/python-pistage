@@ -7,11 +7,11 @@ class E545(Controller):
     def __init__(self, port=None):
         super(E545, self).__init__()
 
-        self._serial.write('ONL 1 1 2 1 3 1\r')
-        self._serial.write('SVO A 1 B 1 C 1\r')
-        self._serial.write('DCO A 1 B 1 C 1\r')
+        self._sock.send('ONL 1 1 2 1 3 1\n')
+        self._sock.send('SVO A 1 B 1 C 1\n')
+        self._sock.send('DCO A 1 B 1 C 1\n')
 
-        print('PIStage initialized on port %s' %self._serial.name)
+        print('E545 initialized')
         print('All Channels in Online Mode, Servo Control on, Drift Compensation on')
 
         self.moveabs(10,10,10)
@@ -21,8 +21,8 @@ class E545(Controller):
         print('Position: ' + str(_x) +" " + str(_y) + " " + str(_z))
 
     def pos(self):
-        self._serial.write('POS?\r')
-        pos = self._serial.readlines()
+        self._sock.send('POS?\n')
+        pos = self._sock.recv(self._buffer_size)
         x = float(pos[0][2:12])
         y = float(pos[1][2:12])
         z = float(pos[2][2:12])
@@ -47,7 +47,7 @@ class E545(Controller):
                 self._z = z
         print(com)
         if len(com) > 4:
-            self._serial.write(com+"\r")
+            self._sock.send(com+"\n")
 
     def moverel(self, dx=None, dy=None, dz=None):
         com = 'MVR '
@@ -67,7 +67,7 @@ class E545(Controller):
                 self._z += dz
 
         if len(com) > 4:
-            self._serial.write(com+"\r")
+            self._sock.send(com+"\n")
 
     def home(self):
         """
@@ -75,4 +75,4 @@ class E545(Controller):
 
         :return: returns counter values after homing
         """
-        self._serial.write('GOH\r')
+        self._sock.send('GOH\n')

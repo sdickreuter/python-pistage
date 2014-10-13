@@ -69,8 +69,7 @@ print 'Message send successfully'
 
 #get reply and print
 addr, data = recv_timeout(sock)
-print data
-print addr
+print 'found Controller' + data + ' at ' + addr[0]
 #Close the socket
 sock.close()
 
