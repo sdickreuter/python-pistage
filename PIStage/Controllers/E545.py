@@ -21,8 +21,13 @@ class E545(Controller):
         print('Position: ' + str(_x) +" " + str(_y) + " " + str(_z))
 
     def pos(self):
-        self._sock.send('POS?\n')
-        pos = self._sock.recv(self._buffer_size)
+        try:
+            self._sock.send('POS?\n')
+            pos = self._sock.recv(self._buffer_size)
+        except:
+            self._sock.close()
+            RuntimeError('Lost Connection to Controller')
+        pos = pos.split("\n")
         x = float(pos[0][2:12])
         y = float(pos[1][2:12])
         z = float(pos[2][2:12])
@@ -47,7 +52,12 @@ class E545(Controller):
                 self._z = z
         print(com)
         if len(com) > 4:
-            self._sock.send(com+"\n")
+            try:
+                self._sock.send(com+"\n")
+            except:
+                self._sock.close()
+                RuntimeError('Lost Connection to Controller')
+
 
     def moverel(self, dx=None, dy=None, dz=None):
         com = 'MVR '
@@ -67,7 +77,11 @@ class E545(Controller):
                 self._z += dz
 
         if len(com) > 4:
-            self._sock.send(com+"\n")
+            try:
+                self._sock.send(com+"\n")
+            except:
+                self._sock.close()
+                RuntimeError('Lost Connection to Controller')
 
     def home(self):
         """
@@ -75,4 +89,8 @@ class E545(Controller):
 
         :return: returns counter values after homing
         """
-        self._sock.send('GOH\n')
+        try:
+            self._sock.send('GOH\n')
+        except:
+            self._sock.close()
+            RuntimeError('Lost Connection to Controller')

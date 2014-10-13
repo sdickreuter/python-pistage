@@ -90,6 +90,7 @@ class Controller(object):
             self._sock.send('POS?\n')
             data = self._sock.recv(self._buffer_size)
         except:
+            self._sock.close()
             RuntimeError('Could not connect to Controller')
 
         print 'Successfully connected'
