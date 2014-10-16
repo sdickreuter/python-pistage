@@ -6,9 +6,9 @@ import sys
 import _defines as d
 
 class Controller(object):
-    _x = 0
-    _y = 0
-    _z = 0
+    _x = 0.
+    _y = 0.
+    _z = 0.
     _ip = None
     _port = None
     _ID = None
