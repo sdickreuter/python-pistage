@@ -16,7 +16,7 @@ class E545(Controller):
 
         self.moveabs(10,10,10)
 
-        _x, _y, _z = self.pos()
+        self._x, self._y, self._z = self.pos()
 
         print('Position: ' + str(_x) +" " + str(_y) + " " + str(_z))
 
@@ -31,7 +31,7 @@ class E545(Controller):
         x = float(pos[0][2:12])
         y = float(pos[1][2:12])
         z = float(pos[2][2:12])
-        self._x, self._y, self._z = x, y, z
+        #self._x, self._y, self._z = x, y, z
         return x, y, z
 
     def moveabs(self, x=None, y=None, z=None):
@@ -39,20 +39,21 @@ class E545(Controller):
         if x is not None:
             if (x > 0) & (x < 200) :
                 com += 'A '+str(round(x,4))
-                self._x = x
+                #self._x = x
         if y is not None:
             if (y > 0) & (y < 200) :
                 if len(com) > 4: com+= ' '
                 com += 'B '+str(round(y,4))
-                self._y = y
+                #self._y = y
         if z is not None:
             if (z > 0) & (z < 200) :
                 if len(com) > 4: com+= ' '
                 com += 'C '+str(round(z,4))
-                self._z = z
+                #self._z = z
         if len(com) > 4:
             try:
                 self._sock.send(com+"\n")
+                self._x, self._y, self._z = self.pos()
             except:
                 self._sock.close()
                 RuntimeError('Lost Connection to Controller')
@@ -63,21 +64,22 @@ class E545(Controller):
         if dx is not None:
             if ((self._x+dx) > 0) & ((self._x+dx) < 200) :
                 com += 'A '+str(round(dx,4))
-                self._x += dx
+                #self._x += dx
         if dy is not None:
             if ((self._y+dy) > 0) & ((self._y+dy) < 200) :
                 if len(com) > 4: com+= ' '
                 com += 'B '+str(round(dy,4))
-                self._y += dy
+                #self._y += dy
         if dz is not None:
             if ((self._z+dz) > 0) & ((self._z+dz) < 200) :
                 if len(com) > 4: com+= ' '
                 com += 'C '+str(round(dz,4))
-                self._z += dz
+                #self._z += dz
 
         if len(com) > 4:
             try:
                 self._sock.send(com+"\n")
+                self._x, self._y, self._z = self.pos()
             except:
                 self._sock.close()
                 RuntimeError('Lost Connection to Controller')
@@ -90,6 +92,7 @@ class E545(Controller):
         """
         try:
             self._sock.send('GOH\n')
+            self._x, self._y, self._z = self.pos()
         except:
             self._sock.close()
             RuntimeError('Lost Connection to Controller')
