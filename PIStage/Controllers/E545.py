@@ -1,6 +1,7 @@
 __author__ = 'sei'
 
 from PIStage._base import Controller
+import time
 
 class E545(Controller):
 
@@ -21,17 +22,25 @@ class E545(Controller):
         print('Position: ' + str(self._x) +" " + str(self._y) + " " + str(self._z))
 
     def pos(self):
+        time.sleep(0.01)
         try:
             self._sock.send('POS?\n')
             pos = self._sock.recv(self._buffer_size)
+            #self._sock.send("ERR?\n")
+            #print self._sock.recv(self._buffer_size)
         except:
             self._sock.close()
             RuntimeError('Lost Connection to Controller')
+        #print pos
         pos = pos.split("\n")
         x = float(pos[0][2:12])
         y = float(pos[1][2:12])
         z = float(pos[2][2:12])
-        self._x, self._y, self._z = x, y, z
+        self._x = x
+        self._y = y
+        self._z = z
+        #print "pos {0:+8.4f} {1:+8.4f} {2:+8.4f}".format(self._x, self._y, self._z)
+        time.sleep(0.01)
         return x, y, z
 
     def moveabs(self, x=None, y=None, z=None):
@@ -53,6 +62,8 @@ class E545(Controller):
         if len(com) > 4:
             try:
                 self._sock.send(com+"\n")
+                #self._sock.send("ERR?\n")
+                #print self._sock.recv(self._buffer_size)
                 #self._x, self._y, self._z = self.pos()
             except:
                 self._sock.close()
@@ -79,6 +90,8 @@ class E545(Controller):
         if len(com) > 4:
             try:
                 self._sock.send(com+"\n")
+                #self._sock.send("ERR?\n")
+                #print self._sock.recv(self._buffer_size)
                 #self._x, self._y, self._z = self.pos()
             except:
                 self._sock.close()
