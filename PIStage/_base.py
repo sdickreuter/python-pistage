@@ -3,7 +3,8 @@ __author__ = 'sei'
 import socket
 import time
 import sys
-import _defines as d
+from billiard import Lock
+
 
 class Controller(object):
     _x = 0.
@@ -15,26 +16,25 @@ class Controller(object):
     _sock = None
     _buffer_size = 1024
 
-    def _findController(self):
+    def _findcontroller(self):
 
-        def recv_timeout(the_socket,timeout=2):
-            #make socket non blocking
+        def recv_timeout(the_socket, timeout=2):
+            # make socket non blocking
             the_socket.setblocking(0)
 
-            #total data partwise in an array
-            total_data=[];
-            data='';
+            # total data partwise in an array
+            total_data = []
 
             addr = None
             #beginning time
-            begin=time.time()
+            begin = time.time()
             while 1:
                 #if you got some data, then break after timeout
-                if total_data and time.time()-begin > timeout:
+                if total_data and time.time() - begin > timeout:
                     break
 
                 #if you got no data at all, wait a little longer, twice the timeout
-                elif time.time()-begin > timeout*2:
+                elif time.time() - begin > timeout * 2:
                     break
 
                 #recv something
@@ -50,13 +50,15 @@ class Controller(object):
                 except:
                     pass
 
-            if addr is not None : print addr
+            if addr is not None:
+                print(addr)
             #join all parts to make final string
-            return (addr,''.join(total_data))
+            return addr, ''.join(total_data)
 
         message = 'PI'
         multicast_group = ('<broadcast>', 50000)
 
+        #self._lock.acquire()
         # Create the datagram socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.bind(('', 0))
@@ -65,38 +67,44 @@ class Controller(object):
 
         try:
             # Send data to the multicast group
-            print 'Searching for Controller'
-            sent = sock.sendto(message, multicast_group)
+            print('Searching for Controller')
+            sock.sendto(message, multicast_group)
         except socket.error:
-            #Send failed
-            print 'Send failed'
+            # Send failed
+            print('Send failed')
             sys.exit()
 
-        #get reply and print
+        # get reply and print
         addr, data = recv_timeout(sock)
-        print 'found Controller' + data + ' at ' + addr[0]
-        #Close the socket
+        print('found Controller' + data + ' at ' + addr[0])
+        # Close the socket
         sock.close()
+        #self._lock.release()
         return addr[0], addr[1], data
 
     def __init__(self):
-        self._ip, self._port, self._ID = self._findController()
+        self._ip, self._port, self._ID = self._findcontroller()
+        self._lock = Lock()
 
-        print 'Trying to connect to Controller...'
+        print('Trying to connect to Controller...')
 
+        #self._lock.acquire()
         try:
             self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self._sock.connect((self._ip, self._port))
             self._sock.send('POS?\n')
-            data = self._sock.recv(self._buffer_size)
+            self._sock.recv(self._buffer_size)
         except:
             self._sock.close()
             RuntimeError('Could not connect to Controller')
+        #self._lock.release()
 
-        print 'Successfully connected'
+        print('Successfully connected')
 
     def __del__(self):
+        #self._lock.acquire()
         self._sock.close()
+        #self._lock.release()
 
     def pos(self):
         pass

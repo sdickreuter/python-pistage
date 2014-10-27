@@ -5,24 +5,23 @@ import sys
 import time
 
 
-def recv_timeout(the_socket,timeout=2):
-    #make socket non blocking
+def recv_timeout(the_socket, timeout=2):
+    # make socket non blocking
     the_socket.setblocking(0)
 
     #total data partwise in an array
-    total_data=[];
-    data='';
+    total_data = []
 
     addr = None
     #beginning time
-    begin=time.time()
+    begin = time.time()
     while 1:
         #if you got some data, then break after timeout
-        if total_data and time.time()-begin > timeout:
+        if total_data and time.time() - begin > timeout:
             break
 
         #if you got no data at all, wait a little longer, twice the timeout
-        elif time.time()-begin > timeout*2:
+        elif time.time() - begin > timeout * 2:
             break
 
         #recv something
@@ -38,14 +37,15 @@ def recv_timeout(the_socket,timeout=2):
         except:
             pass
 
-    if addr is not None : print addr
-    #join all parts to make final string
-    return (addr,''.join(total_data))
+    if addr is not None:
+        print(addr)
+    # join all parts to make final string
+    return addr, ''.join(total_data)
 
-message = 'PI'
-multicast_group = ('<broadcast>', 50000)
-#multicast_group = ('225.255.255.255', 50000)
 
+message = bytes('PI', 'UTF-8')
+multicast_group = (bytes('<broadcast>', 'UTF-8'), 50000)
+# multicast_group = ('225.255.255.255', 50000)
 
 # Create the datagram socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -58,22 +58,20 @@ sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
 try:
     # Send data to the multicast group
-    print 'Searching for Controller'
-    sent = sock.sendto(message, multicast_group)
+    print('Searching for Controller')
+    sock.sendto(message, multicast_group)
 except socket.error:
     #Send failed
-    print 'Send failed'
+    print('Send failed')
     sys.exit()
 
-print 'Message send successfully'
+print('Message send successfully')
 
 #get reply and print
 addr, data = recv_timeout(sock)
-print 'found Controller' + data + ' at ' + addr[0]
+print('found Controller' + data + ' at ' + addr[0])
 #Close the socket
 sock.close()
-
-
 
 TCP_IP = addr[0]
 TCP_PORT = addr[1]
@@ -86,5 +84,5 @@ s.send(MESSAGE)
 data = s.recv(BUFFER_SIZE)
 s.close()
 
-print "received data:", data
+print("received data:", data)
 
