@@ -105,7 +105,7 @@ class E545(Controller):
         self._lock.acquire()
         try:
             self._sock.send('GOH\n')
-            self._x, self._y, self._z = self.pos()
+            self._x, self._y, self._z = self.query_pos()
         except:
             self._sock.close()
             RuntimeError('Lost Connection to Controller')
