@@ -35,14 +35,10 @@ class E545(Controller):
             RuntimeError('Lost Connection to Controller')
         self._lock.release()
         pos = pos.split("\n")
-        x = float(pos[0][2:12])
-        y = float(pos[1][2:12])
-        z = float(pos[2][2:12])
-        self._x = x
-        self._y = y
-        self._z = z
-        # print "pos {0:+8.4f} {1:+8.4f} {2:+8.4f}".format(self._x, self._y, self._z)
-        return x, y, z
+        self._x = float(pos[0][2:12])
+        self._y = float(pos[1][2:12])
+        self._z = float(pos[2][2:12])
+        return self._x, self._y, self._z
 
     def moveabs(self, x=None, y=None, z=None):
         com = 'MOV '
