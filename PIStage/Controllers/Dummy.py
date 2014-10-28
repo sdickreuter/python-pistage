@@ -15,7 +15,7 @@ class Dummy(Controller):
         self._z = 10.0
         print('Dummy initialized')
 
-    def pos(self):
+    def query_pos(self):
         self._lock.acquire()
         time.sleep(0.05)
         self._lock.release()

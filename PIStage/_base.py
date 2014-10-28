@@ -7,18 +7,16 @@ from billiard import Lock
 
 
 class Controller(object):
-    _x = 0.
-    _y = 0.
-    _z = 0.
-    _ip = None
-    _port = None
-    _ID = None
-    _sock = None
-    _buffer_size = 1024
 
     def __init__(self):
         self._ip, self._port, self._ID = self._findcontroller()
         self._lock = Lock()
+        self._x = 0.
+        self._y = 0.
+        self._z = 0.
+        self._ID = None
+        self._sock = None
+        self._buffer_size = 1024
 
         print('Trying to connect to Controller...')
 
@@ -108,7 +106,7 @@ class Controller(object):
         self._sock.close()
         self._lock.release()
 
-    def pos(self):
+    def query_pos(self):
         pass
 
     def moveabs(self, x=None, y=None, z=None):
@@ -119,3 +117,6 @@ class Controller(object):
 
     def home(self):
         pass
+
+    def last_pos(self):
+        return (self._x, self._y, self._z)

@@ -18,11 +18,11 @@ class E545(Controller):
 
         self.moveabs(10, 10, 10)
 
-        self._x, self._y, self._z = self.pos()
+        self._x, self._y, self._z = self.query_pos()
 
         print('Position: ' + str(self._x) + " " + str(self._y) + " " + str(self._z))
 
-    def pos(self):
+    def query_pos(self):
         self._lock.acquire()
         try:
             self._sock.send('POS?\n')
