@@ -16,6 +16,26 @@ class Controller(object):
     _sock = None
     _buffer_size = 1024
 
+    def __init__(self):
+        self._ip, self._port, self._ID = self._findcontroller()
+        self._lock = Lock()
+
+        print('Trying to connect to Controller...')
+
+        self._lock.acquire()
+        try:
+            self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self._sock.connect((self._ip, self._port))
+            self._sock.send('POS?\n')
+            self._sock.recv(self._buffer_size)
+        except:
+            self._sock.close()
+            RuntimeError('Could not connect to Controller')
+        self._lock.release()
+
+        print('Successfully connected')
+
+
     def _findcontroller(self):
 
         def recv_timeout(the_socket, timeout=2):
@@ -58,7 +78,7 @@ class Controller(object):
         message = 'PI'
         multicast_group = ('<broadcast>', 50000)
 
-        #self._lock.acquire()
+        self._lock.acquire()
         # Create the datagram socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.bind(('', 0))
@@ -79,32 +99,14 @@ class Controller(object):
         print('found Controller' + data + ' at ' + addr[0])
         # Close the socket
         sock.close()
-        #self._lock.release()
+        self._lock.release()
         return addr[0], addr[1], data
 
-    def __init__(self):
-        self._ip, self._port, self._ID = self._findcontroller()
-        self._lock = Lock()
-
-        print('Trying to connect to Controller...')
-
-        #self._lock.acquire()
-        try:
-            self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self._sock.connect((self._ip, self._port))
-            self._sock.send('POS?\n')
-            self._sock.recv(self._buffer_size)
-        except:
-            self._sock.close()
-            RuntimeError('Could not connect to Controller')
-        #self._lock.release()
-
-        print('Successfully connected')
 
     def __del__(self):
-        #self._lock.acquire()
+        self._lock.acquire()
         self._sock.close()
-        #self._lock.release()
+        self._lock.release()
 
     def pos(self):
         pass

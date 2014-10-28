@@ -23,8 +23,7 @@ class E545(Controller):
         print('Position: ' + str(self._x) + " " + str(self._y) + " " + str(self._z))
 
     def pos(self):
-        time.sleep(0.01)
-        #self._lock.acquire()
+        self._lock.acquire()
         try:
             self._sock.send('POS?\n')
             pos = self._sock.recv(self._buffer_size)
@@ -34,7 +33,7 @@ class E545(Controller):
             self._sock.close()
             pos = None
             RuntimeError('Lost Connection to Controller')
-        #self._lock.release()
+        self._lock.release()
         pos = pos.split("\n")
         x = float(pos[0][2:12])
         y = float(pos[1][2:12])
@@ -43,7 +42,6 @@ class E545(Controller):
         self._y = y
         self._z = z
         # print "pos {0:+8.4f} {1:+8.4f} {2:+8.4f}".format(self._x, self._y, self._z)
-        time.sleep(0.01)
         return x, y, z
 
     def moveabs(self, x=None, y=None, z=None):
@@ -65,13 +63,13 @@ class E545(Controller):
                 com += 'C ' + str(round(z, 4))
                 self._z = z
         if len(com) > 4:
-            #self._lock.acquire()
+            self._lock.acquire()
             try:
                 self._sock.send(com + "\n")
             except:
                 self._sock.close()
                 RuntimeError('Lost Connection to Controller')
-            #self._lock.release()
+            self._lock.release()
 
     def moverel(self, dx=None, dy=None, dz=None):
         com = 'MVR '
@@ -93,13 +91,13 @@ class E545(Controller):
                 self._z += dz
 
         if len(com) > 4:
-            #self._lock.acquire()
+            self._lock.acquire()
             try:
                 self._sock.send(com + "\n")
             except:
                 self._sock.close()
                 RuntimeError('Lost Connection to Controller')
-            #self._lock.release()
+            self._lock.release()
 
 
     def home(self):
@@ -108,11 +106,11 @@ class E545(Controller):
 
         :return: returns counter values after homing
         """
-        #self._lock.acquire()
+        self._lock.acquire()
         try:
             self._sock.send('GOH\n')
             self._x, self._y, self._z = self.pos()
         except:
             self._sock.close()
             RuntimeError('Lost Connection to Controller')
-        #self._lock.release()
+        self._lock.release()
