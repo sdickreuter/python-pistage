@@ -1,9 +1,6 @@
 __author__ = 'sei'
 
-import time
-
 from PIStage._base import Controller
-
 
 class E545(Controller):
     def __init__(self):
@@ -18,7 +15,7 @@ class E545(Controller):
 
         self.moveabs(10, 10, 10)
 
-        self._x, self._y, self._z = self.query_pos()
+        self._x.value, self._y.value, self._z.value = self.query_pos()
 
         print('Position: ' + str(self._x) + " " + str(self._y) + " " + str(self._z))
 
@@ -35,29 +32,29 @@ class E545(Controller):
             RuntimeError('Lost Connection to Controller')
         self._lock.release()
         pos = pos.split("\n")
-        self._x = float(pos[0][2:12])
-        self._y = float(pos[1][2:12])
-        self._z = float(pos[2][2:12])
-        return self._x, self._y, self._z
+        self._x.value = float(pos[0][2:12])
+        self._y.value = float(pos[1][2:12])
+        self._z.value = float(pos[2][2:12])
+        return self._x.value, self._y.value, self._z.value
 
     def moveabs(self, x=None, y=None, z=None):
         com = 'MOV '
         if x is not None:
             if (x > 0) & (x < 200):
                 com += 'A ' + str(round(x, 4))
-                self._x = x
+                self._x.value = x
         if y is not None:
             if (y > 0) & (y < 200):
                 if len(com) > 4:
                     com += ' '
                 com += 'B ' + str(round(y, 4))
-                self._y = y
+                self._y.value = y
         if z is not None:
             if (z > 0) & (z < 200):
                 if len(com) > 4:
                     com += ' '
                 com += 'C ' + str(round(z, 4))
-                self._z = z
+                self._z.value = z
         if len(com) > 4:
             self._lock.acquire()
             try:
@@ -70,21 +67,21 @@ class E545(Controller):
     def moverel(self, dx=None, dy=None, dz=None):
         com = 'MVR '
         if dx is not None:
-            if ((self._x + dx) > 0) & ((self._x + dx) < 200):
+            if ((self._x.value + dx) > 0) & ((self._x.value + dx) < 200):
                 com += 'A ' + str(round(dx, 4))
-                self._x += dx
+                self._x.value += dx
         if dy is not None:
-            if ((self._y + dy) > 0) & ((self._y + dy) < 200):
+            if ((self._y.value + dy) > 0) & ((self._y.value + dy) < 200):
                 if len(com) > 4:
                     com += ' '
                 com += 'B ' + str(round(dy, 4))
-                self._y += dy
+                self._y.value += dy
         if dz is not None:
-            if ((self._z + dz) > 0) & ((self._z + dz) < 200):
+            if ((self._z.value + dz) > 0) & ((self._z.value + dz) < 200):
                 if len(com) > 4:
                     com += ' '
                 com += 'C ' + str(round(dz, 4))
-                self._z += dz
+                self._z.value += dz
 
         if len(com) > 4:
             self._lock.acquire()
@@ -105,7 +102,7 @@ class E545(Controller):
         self._lock.acquire()
         try:
             self._sock.send('GOH\n')
-            self._x, self._y, self._z = self.query_pos()
+            self._x.value, self._y.value, self._z.value = self.query_pos()
         except:
             self._sock.close()
             RuntimeError('Lost Connection to Controller')

@@ -3,17 +3,16 @@ __author__ = 'sei'
 import socket
 import time
 import sys
-from billiard import Lock
+import multiprocessing
 
 
 class Controller(object):
-
     def __init__(self):
         self._ip, self._port, self._ID = self._findcontroller()
-        self._lock = Lock()
-        self._x = 0.
-        self._y = 0.
-        self._z = 0.
+        self._lock = multiprocessing.Lock()
+        self._x = multiprocessing.Value('d', 0.)
+        self._y = multiprocessing.Value('d', 0.)
+        self._z = multiprocessing.Value('d', 0.)
         self._ID = None
         self._sock = None
         self._buffer_size = 1024
@@ -44,10 +43,10 @@ class Controller(object):
             total_data = []
 
             addr = None
-            #beginning time
+            # beginning time
             begin = time.time()
             while 1:
-                #if you got some data, then break after timeout
+                # if you got some data, then break after timeout
                 if total_data and time.time() - begin > timeout:
                     break
 
@@ -70,7 +69,7 @@ class Controller(object):
 
             if addr is not None:
                 print(addr)
-            #join all parts to make final string
+            # join all parts to make final string
             return addr, ''.join(total_data)
 
         message = 'PI'
@@ -119,4 +118,4 @@ class Controller(object):
         pass
 
     def last_pos(self):
-        return (self._x, self._y, self._z)
+        return self._x.value, self._y.value, self._z.value

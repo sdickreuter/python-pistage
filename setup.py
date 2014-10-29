@@ -9,5 +9,5 @@ setup(
     packages=['PIStage', 'PIStage.Controllers'],
     description='Python module for commanding PI P545 Piezo Stage. This software is not associated with PI. Use it at your own risk.',
     long_description=open('README.md').read(),
-    requires=['python (>= 2.7)', 'numpy'],
+    requires=['python (>= 2.7)', 'numpy', 'billiard'],
 )
