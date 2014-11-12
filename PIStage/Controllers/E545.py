@@ -67,23 +67,27 @@ class E545(Controller):
             self._lock.release()
 
     def moverel(self, dx=None, dy=None, dz=None):
-        com = 'MVR '
+        #com = 'MVR '
+        com = 'MOV '
         if dx is not None:
             if ((self._x.value + dx) > 0) & ((self._x.value + dx) < 200):
-                com += 'A ' + str(round(dx, 4))
+                #com += 'A ' + str(round(dx, 4))
                 self._x.value += dx
+                com += 'A ' + str(round(self._x.value, 4))
         if dy is not None:
             if ((self._y.value + dy) > 0) & ((self._y.value + dy) < 200):
                 if len(com) > 4:
                     com += ' '
-                com += 'B ' + str(round(dy, 4))
+                #com += 'B ' + str(round(dy, 4))
                 self._y.value += dy
+                com += 'B ' + str(round(self._y.value, 4))
         if dz is not None:
             if ((self._z.value + dz) > 0) & ((self._z.value + dz) < 200):
                 if len(com) > 4:
                     com += ' '
-                com += 'C ' + str(round(dz, 4))
+                #com += 'C ' + str(round(dz, 4))
                 self._z.value += dz
+                com += 'C ' + str(round(self._z.value, 4))
 
         if len(com) > 4:
             self._lock.acquire()
