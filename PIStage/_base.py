@@ -5,10 +5,8 @@ import time
 import sys
 import multiprocessing
 
-
 class Controller(object):
     def __init__(self):
-        self._ip, self._port, self._ID = self._findcontroller()
         self._lock = multiprocessing.Lock()
         self._x = multiprocessing.Value('d', 0.)
         self._y = multiprocessing.Value('d', 0.)
@@ -16,6 +14,7 @@ class Controller(object):
         self._ID = None
         self._sock = None
         self._buffer_size = 1024
+        self._ip, self._port, self._ID = self._findcontroller()
 
         print('Trying to connect to Controller...')
 
@@ -23,8 +22,7 @@ class Controller(object):
         try:
             self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self._sock.connect((self._ip, self._port))
-            self._sock.send('POS?\n')
-            self._sock.recv(self._buffer_size)
+            self._sock.send('POS?\n'.encode('UTF-8'))
         except:
             self._sock.close()
             RuntimeError('Could not connect to Controller')
@@ -70,10 +68,10 @@ class Controller(object):
             if addr is not None:
                 print(addr)
             # join all parts to make final string
-            return addr, ''.join(total_data)
+            return addr, str(total_data[0],"UTF-8")
 
-        message = 'PI'
-        multicast_group = ('<broadcast>', 50000)
+        message = bytes('PI', 'UTF-8')
+        multicast_group = (bytes('<broadcast>', 'UTF-8'), 50000)
 
         self._lock.acquire()
         # Create the datagram socket
