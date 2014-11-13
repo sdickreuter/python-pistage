@@ -35,11 +35,11 @@ class E545(Controller):
             return False
         pos = str(pos,'UTF-8')
         pos = pos.split("\n")
+        self._lock.release()
         self._x.value = float(pos[0][2:12])
         self._y.value = float(pos[1][2:12])
         self._z.value = float(pos[2][2:12])
-        self._lock.release()
-        return self._x.value, self._y.value, self._z.value
+        #return self._x.value, self._y.value, self._z.value
 
     def moveabs(self, x=None, y=None, z=None):
         com = 'MOV '
@@ -110,7 +110,7 @@ class E545(Controller):
         self._lock.acquire()
         try:
             self._sock.send(bytes("GOH\n",'UTF-8'))
-            self._x.value, self._y.value, self._z.value = self.query_pos()
+            self.query_pos()
         except:
             self._sock.close()
             RuntimeError('Lost Connection to Controller')

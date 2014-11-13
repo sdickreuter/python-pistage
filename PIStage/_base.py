@@ -23,6 +23,7 @@ class Controller(object):
             self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self._sock.connect((self._ip, self._port))
             self._sock.send('POS?\n'.encode('UTF-8'))
+            print(self._sock.recv(self._buffer_size))
         except:
             self._sock.close()
             RuntimeError('Could not connect to Controller')
