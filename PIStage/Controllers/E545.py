@@ -6,16 +6,18 @@ class E545(Controller):
     def __init__(self):
         #super(E545, self).__init__()
         super().__init__()
-        self._sock.send('ONL 1 1 2 1 3 1\n'.encode('UTF-8'))
-        self._sock.send('SVO A 1 B 1 C 1\n'.encode('UTF-8'))
-        self._sock.send('DCO A 1 B 1 C 1\n'.encode('UTF-8'))
+
+        self._sock.send(bytes('ONL 1 1 2 1 3 1\n','UTF-8'))
+        self._sock.send(bytes('SVO A 1 B 1 C 1\n','UTF-8'))
+        self._sock.send(bytes('DCO A 1 B 1 C 1\n','UTF-8'))
 
         print('E545 initialized')
         print('All Channels in Online Mode, Servo Control on, Drift Compensation on')
 
-        self.moveabs(10, 10, 10)
+        #self.moveabs(10, 10, 10)
 
-        self._x.value, self._y.value, self._z.value = self.query_pos()
+        self.query_pos()
+        #self._x.value, self._y.value, self._z.value = self.query_pos()
 
         print('Position: ' + str(self._x.value) + " " + str(self._y.value) + " " + str(self._z.value))
 
@@ -31,12 +33,12 @@ class E545(Controller):
             pos = None
             RuntimeError('Lost Connection to Controller')
             return False
-        self._lock.release()
         pos = str(pos,'UTF-8')
         pos = pos.split("\n")
         self._x.value = float(pos[0][2:12])
         self._y.value = float(pos[1][2:12])
         self._z.value = float(pos[2][2:12])
+        self._lock.release()
         return self._x.value, self._y.value, self._z.value
 
     def moveabs(self, x=None, y=None, z=None):
