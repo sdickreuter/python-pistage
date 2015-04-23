@@ -31,6 +31,11 @@ class Controller(object):
 
         print('Successfully connected')
 
+    def __del__(self):
+        if not self._sock._closed():
+            self._lock.acquire()
+            self._sock.close()
+            self._lock.release()
 
     def _findcontroller(self):
 
@@ -97,12 +102,6 @@ class Controller(object):
         sock.close()
         self._lock.release()
         return addr[0], addr[1], data
-
-
-    def __del__(self):
-        self._lock.acquire()
-        self._sock.close()
-        self._lock.release()
 
     def query_pos(self):
         pass
