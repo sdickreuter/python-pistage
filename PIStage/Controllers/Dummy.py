@@ -17,7 +17,7 @@ class Dummy(Controller):
         #pos['x'] = 10.0
         #pos['y'] = 10.0
         #pos['z'] = 10.0
-        print('Dummy initialized')
+        print('PIStage Dummy initialized')
 
     def query_pos(self):
         self._lock.acquire()
