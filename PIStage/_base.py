@@ -6,7 +6,7 @@ import sys
 import multiprocessing
 
 class Controller(object):
-    def __init__(self):
+    def __init__(self, ip=None, port=None):
         self._lock = multiprocessing.Lock()
         self._x = multiprocessing.Value('d', 0.)
         self._y = multiprocessing.Value('d', 0.)
@@ -14,7 +14,11 @@ class Controller(object):
         self._ID = None
         self._sock = None
         self._buffer_size = 1024
-        self._ip, self._port, self._ID = self._findcontroller()
+        if ip is None:
+            self._ip, self._port, self._ID = self._findcontroller()
+        else:
+            self._ip = ip
+            self._port = port
 
         print('Trying to connect to Controller...')
 
