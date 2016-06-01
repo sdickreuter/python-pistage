@@ -7,6 +7,8 @@ import multiprocessing
 
 class Controller(object):
     def __init__(self, ip=None, port=None):
+        self.is_initialized = False
+        received = None
         self._lock = multiprocessing.Lock()
         self._x = multiprocessing.Value('d', 0.)
         self._y = multiprocessing.Value('d', 0.)
@@ -27,19 +29,25 @@ class Controller(object):
             self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self._sock.connect((self._ip, self._port))
             self._sock.send('POS?\n'.encode('UTF-8'))
-            print(self._sock.recv(self._buffer_size))
+            received = self._sock.recv(self._buffer_size)
+            print(received)
         except:
             self._sock.close()
             RuntimeError('Could not connect to Controller')
         self._lock.release()
 
-        print('Successfully connected')
+        if not received is None:
+            print('Successfully connected to Controller')
+            self.is_initialized = True
+        else:
+            print('Could not connect to Controller')
 
     def __del__(self):
-        if not self._sock._closed():
-            self._lock.acquire()
-            self._sock.close()
-            self._lock.release()
+        if not self._sock is None:
+            if not self._sock._closed:
+                self._lock.acquire()
+                self._sock.close()
+                self._lock.release()
 
     def _findcontroller(self):
 
