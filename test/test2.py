@@ -40,7 +40,7 @@ def recv_timeout(the_socket, timeout=2):
     if addr is not None:
         print(addr)
     # join all parts to make final string
-    return addr, ''.join(total_data)
+    return addr, (total_data[0]).decode('utf8')
 
 
 message = bytes('PI', 'UTF-8')
@@ -76,7 +76,7 @@ sock.close()
 TCP_IP = addr[0]
 TCP_PORT = addr[1]
 BUFFER_SIZE = 1024
-MESSAGE = "POS?\n"
+MESSAGE = b"POS?\n"
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((TCP_IP, TCP_PORT))
