@@ -36,12 +36,14 @@ class E545(Controller):
         pos = str(pos,'UTF-8')
         pos = pos.split("\n")
         self._lock.release()
-        self._x.value = float(pos[0][2:12])
-        self._y.value = float(pos[1][2:12])
-        self._z.value = float(pos[2][2:12])
+        self._x.value,self._y.value,self._z.value = self.map_coordinates(float(pos[0][2:12]),float(pos[1][2:12]),float(pos[2][2:12]))
+                #self._x.value = float(pos[0][2:12])
+        #self._y.value = float(pos[1][2:12])
+        #self._z.value = float(pos[2][2:12])
         #return self._x.value, self._y.value, self._z.value
 
     def moveabs(self, x=None, y=None, z=None):
+        x,y,z = self.map_coordinates(x,y,z)
         com = 'MOV '
         if x is not None:
             if (x > 0) & (x < 200):
@@ -69,6 +71,7 @@ class E545(Controller):
             self._lock.release()
 
     def moverel(self, dx=None, dy=None, dz=None):
+        dx,dy,dz = self.map_coordinates(dx,dy,dz)
         #com = 'MVR '
         com = 'MOV '
         if dx is not None:

@@ -6,7 +6,7 @@ import sys
 import multiprocessing
 
 class Controller(object):
-    def __init__(self, ip=None, port=None):
+    def __init__(self, ip=None, port=None, coordinate_mapping = None):
         self.is_initialized = False
         received = None
         self._lock = multiprocessing.Lock()
@@ -16,6 +16,12 @@ class Controller(object):
         self._ID = None
         self._sock = None
         self._buffer_size = 1024
+
+        # examples for coordinate_mapping:
+        #  coordinate_mapping = {"x":"x","y":"y","z":"z"} will map coordinates to themselves
+        #  coordinate_mapping = {"x":"z","y":"y","z":"x"} will map x to z and z to x, y stays the same
+        self._coord_map = coordinate_mapping
+
         if ip is None:
             self._ip, self._port, self._ID = self._findcontroller()
         else:
@@ -114,6 +120,34 @@ class Controller(object):
         sock.close()
         self._lock.release()
         return addr[0], addr[1], data
+
+    def map_coordinates(self,x,y,z):
+        if self._coord_map is not None:
+
+            if self._coord_map["x"] == "x":
+                nx = x
+            elif self._coord_map["x"] == "y":
+                nx = y
+            elif self._coord_map["x"] == "z":
+                nx = z
+
+            if self._coord_map["y"] == "x":
+                ny = x
+            elif self._coord_map["y"] == "y":
+                ny = y
+            elif self._coord_map["y"] == "z":
+                ny = z
+
+            if self._coord_map["z"] == "x":
+                nz = x
+            elif self._coord_map["z"] == "y":
+                nz = y
+            elif self._coord_map["z"] == "z":
+                nz = z
+
+            return nx, ny, nz
+        else:
+            return x,y,z
 
     def query_pos(self):
         pass
