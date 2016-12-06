@@ -52,7 +52,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.bind(('', 0))
 # Set a timeout so the socket does not block indefinitely when trying
 # to receive data.
-sock.settimeout(2)
+sock.settimeout(5)
 
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 

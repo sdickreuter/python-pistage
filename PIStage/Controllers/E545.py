@@ -3,9 +3,9 @@ __author__ = 'sei'
 from PIStage._base import Controller
 
 class E545(Controller):
-    def __init__(self, ip=None, port=None):
+    def __init__(self, ip=None, port=None, coordinate_mapping = None):
         #super(E545, self).__init__()
-        super().__init__(ip=ip,port=port)
+        super().__init__(ip=ip,port=port,coordinate_mapping=coordinate_mapping)
 
         self._sock.send(bytes('ONL 1 1 2 1 3 1\n','UTF-8'))
         self._sock.send(bytes('SVO A 1 B 1 C 1\n','UTF-8'))
