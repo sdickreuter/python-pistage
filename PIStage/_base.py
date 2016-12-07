@@ -188,3 +188,4 @@ class Controller(object):
             return nx, ny, nz
         else:
             return self._x.value, self._y.value, self._z.value
+        #return self._x.value, self._y.value, self._z.value

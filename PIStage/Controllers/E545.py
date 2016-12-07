@@ -31,16 +31,15 @@ class E545(Controller):
         except:
             self._sock.close()
             pos = None
-            RuntimeError('Lost Connection to Controller')
-            return False
+            raise RuntimeError('Lost Connection to Controller')
+
         pos = str(pos,'UTF-8')
         pos = pos.split("\n")
         self._lock.release()
-        self._x.value,self._y.value,self._z.value = self.map_coordinates(float(pos[0][2:12]),float(pos[1][2:12]),float(pos[2][2:12]))
-                #self._x.value = float(pos[0][2:12])
-        #self._y.value = float(pos[1][2:12])
-        #self._z.value = float(pos[2][2:12])
-        #return self._x.value, self._y.value, self._z.value
+        self._x.value = float(pos[0][2:12])
+        self._y.value = float(pos[1][2:12])
+        self._z.value = float(pos[2][2:12])
+        return self._x.value, self._y.value, self._z.value
 
     def moveabs(self, x=None, y=None, z=None):
         x,y,z = self.map_coordinates(x,y,z)
@@ -68,7 +67,9 @@ class E545(Controller):
             except:
                 self._sock.close()
                 RuntimeError('Lost Connection to Controller')
-            self._lock.release()
+            finally:
+                self._lock.release()
+        #self.query_pos()
 
     def moverel(self, dx=None, dy=None, dz=None):
         dx,dy,dz = self.map_coordinates(dx,dy,dz)
@@ -102,7 +103,7 @@ class E545(Controller):
                 self._sock.close()
                 RuntimeError('Lost Connection to Controller')
             self._lock.release()
-
+        #self.query_pos()
 
     def home(self):
         """
