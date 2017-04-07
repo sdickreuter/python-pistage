@@ -45,9 +45,12 @@ class E545(Controller):
     def moveabs(self, x=None, y=None, z=None):
         if z is not None:
             if y is None:
-                y = (z-self._z.value)*math.cos( math.pi * (90-self.z_correction_angle)/180 )
+                xbuf, y, zbuf = self.last_pos()
             else:
-                y += (z-self._z.value) * math.cos(math.pi * (90 - self.z_correction_angle) / 180)
+                xbuf, ybuf, zbuf = self.last_pos()
+            dz = z - zbuf
+            dy = dz*math.cos( math.pi * (90-self.z_correction_angle)/180 )
+            y = y + dy
 
         x,y,z = self.map_coordinates(x,y,z)
         com = 'MOV '
