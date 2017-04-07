@@ -170,7 +170,33 @@ class Controller(object):
         pass
 
     def last_pos(self):
-        return self._x.value, self._y.value, self._z.value
+        if self._coord_map is not None:
+
+            if self._coord_map["x"] == "x":
+                nx = self._x.value
+            elif self._coord_map["x"] == "y":
+                nx = self._y.value
+            elif self._coord_map["x"] == "z":
+                nx = self._z.value
+
+            if self._coord_map["y"] == "x":
+                ny = self._x.value
+            elif self._coord_map["y"] == "y":
+                ny = self._y.value
+            elif self._coord_map["y"] == "z":
+                ny = self._z.value
+
+            if self._coord_map["z"] == "x":
+                nz = self._x.value
+            elif self._coord_map["z"] == "y":
+                nz = self._y.value
+            elif self._coord_map["z"] == "z":
+                nz = self._z.value
+
+            return nx, ny, nz
+        else:
+            return self._x.value, self._y.value, self._z.value
+        #return self._x.value, self._y.value, self._z.value
 
     def set_z_correction_angle(self,angle):
         self.z_correction_angle = angle

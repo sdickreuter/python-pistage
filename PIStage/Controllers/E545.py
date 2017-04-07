@@ -4,9 +4,9 @@ from PIStage._base import Controller
 import math
 
 class E545(Controller):
-    def __init__(self, ip=None, port=None):
+    def __init__(self, ip=None, port=None, coordinate_mapping = None):
         #super(E545, self).__init__()
-        super().__init__(ip=ip,port=port)
+        super().__init__(ip=ip,port=port,coordinate_mapping=coordinate_mapping)
 
         self._sock.send(bytes('ONL 1 1 2 1 3 1\n','UTF-8'))
         self._sock.send(bytes('SVO A 1 B 1 C 1\n','UTF-8'))
@@ -32,16 +32,15 @@ class E545(Controller):
         except:
             self._sock.close()
             pos = None
-            RuntimeError('Lost Connection to Controller')
-            return False
+            raise RuntimeError('Lost Connection to Controller')
+
         pos = str(pos,'UTF-8')
         pos = pos.split("\n")
         self._lock.release()
-        self._x.value,self._y.value,self._z.value = self.map_coordinates(float(pos[0][2:12]),float(pos[1][2:12]),float(pos[2][2:12]))
-                #self._x.value = float(pos[0][2:12])
-        #self._y.value = float(pos[1][2:12])
-        #self._z.value = float(pos[2][2:12])
-        #return self._x.value, self._y.value, self._z.value
+        self._x.value = float(pos[0][2:12])
+        self._y.value = float(pos[1][2:12])
+        self._z.value = float(pos[2][2:12])
+        return self._x.value, self._y.value, self._z.value
 
     def moveabs(self, x=None, y=None, z=None):
         x += (z-self._z.value)*math.cos(90-self.z_correction_angle)
@@ -70,7 +69,9 @@ class E545(Controller):
             except:
                 self._sock.close()
                 RuntimeError('Lost Connection to Controller')
-            self._lock.release()
+            finally:
+                self._lock.release()
+        #self.query_pos()
 
     def moverel(self, dx=None, dy=None, dz=None):
         dx += dz*math.cos(90-self.z_correction_angle)
@@ -105,7 +106,7 @@ class E545(Controller):
                 self._sock.close()
                 RuntimeError('Lost Connection to Controller')
             self._lock.release()
-
+        #self.query_pos()
 
     def home(self):
         """

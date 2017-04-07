@@ -1,11 +1,5 @@
 __author__ = 'sei'
 
-import time
-from datetime import datetime
-import math
-
-import PIStage
-
 
 _number_of_samples = 100
 _integration_time = 0.01
