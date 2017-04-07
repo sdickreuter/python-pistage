@@ -4,9 +4,9 @@ from PIStage._base import Controller
 import math
 
 class E545(Controller):
-    def __init__(self, ip=None, port=None, coordinate_mapping = None):
+    def __init__(self, ip=None, port=None, coordinate_mapping = None, z_correction_angle = None):
         #super(E545, self).__init__()
-        super().__init__(ip=ip,port=port,coordinate_mapping=coordinate_mapping)
+        super().__init__(ip=ip,port=port,coordinate_mapping=coordinate_mapping,z_correction_angle=z_correction_angle)
 
         self._sock.send(bytes('ONL 1 1 2 1 3 1\n','UTF-8'))
         self._sock.send(bytes('SVO A 1 B 1 C 1\n','UTF-8'))
@@ -43,7 +43,12 @@ class E545(Controller):
         return self._x.value, self._y.value, self._z.value
 
     def moveabs(self, x=None, y=None, z=None):
-        x += (z-self._z.value)*math.cos(90-self.z_correction_angle)
+        if z is not None:
+            if y is None:
+                y = (z-self._z.value)*math.cos( math.pi * (90-self.z_correction_angle)/180 )
+            else:
+                y += (z-self._z.value) * math.cos(math.pi * (90 - self.z_correction_angle) / 180)
+
         x,y,z = self.map_coordinates(x,y,z)
         com = 'MOV '
         if x is not None:
@@ -74,7 +79,12 @@ class E545(Controller):
         #self.query_pos()
 
     def moverel(self, dx=None, dy=None, dz=None):
-        dx += dz*math.cos(90-self.z_correction_angle)
+        if dz is not None:
+            if dy is None:
+                dy = dz*math.cos( math.pi * (90-self.z_correction_angle)/180 )
+            else:
+                dy += dz * math.cos(math.pi * (90 - self.z_correction_angle) / 180)
+
         dx,dy,dz = self.map_coordinates(dx,dy,dz)
         #com = 'MVR '
         com = 'MOV '
