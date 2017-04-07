@@ -6,7 +6,7 @@ import sys
 import multiprocessing
 
 class Controller(object):
-    def __init__(self, ip=None, port=None, coordinate_mapping = None):
+    def __init__(self, ip=None, port=None, coordinate_mapping = None, z_correction_angle = None):
         self.is_initialized = False
         received = None
         self._lock = multiprocessing.Lock()
@@ -21,6 +21,14 @@ class Controller(object):
         #  coordinate_mapping = {"x":"x","y":"y","z":"z"} will map coordinates to themselves
         #  coordinate_mapping = {"x":"z","y":"y","z":"x"} will map x to z and z to x, y stays the same
         self._coord_map = coordinate_mapping
+
+        # z_correction_angle will move the stage also in x direction if moved in z direction
+        # this compensates movement in x direction when stage is placed at an angle relativ to the objective
+        if z_correction_angle is None:
+            self.z_correction_angle = 0
+        else:
+            self.z_correction_angle = z_correction_angle
+
 
         if ip is None:
             self._ip, self._port, self._ID = self._findcontroller()
@@ -163,3 +171,6 @@ class Controller(object):
 
     def last_pos(self):
         return self._x.value, self._y.value, self._z.value
+
+    def set_z_correction_angle(self,angle):
+        self.z_correction_angle = angle

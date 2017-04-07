@@ -1,6 +1,7 @@
 __author__ = 'sei'
 
 from PIStage._base import Controller
+import math
 
 class E545(Controller):
     def __init__(self, ip=None, port=None):
@@ -43,6 +44,7 @@ class E545(Controller):
         #return self._x.value, self._y.value, self._z.value
 
     def moveabs(self, x=None, y=None, z=None):
+        x += (z-self._z.value)*math.cos(90-self.z_correction_angle)
         x,y,z = self.map_coordinates(x,y,z)
         com = 'MOV '
         if x is not None:
@@ -71,6 +73,7 @@ class E545(Controller):
             self._lock.release()
 
     def moverel(self, dx=None, dy=None, dz=None):
+        dx += dz*math.cos(90-self.z_correction_angle)
         dx,dy,dz = self.map_coordinates(dx,dy,dz)
         #com = 'MVR '
         com = 'MOV '
