@@ -43,42 +43,53 @@ class E545(Controller):
         return self._x.value, self._y.value, self._z.value
 
     def moveabs(self, x=None, y=None, z=None):
-        if z is not None:
-            if y is None:
-                xbuf, y, zbuf = self.last_pos()
-            else:
-                xbuf, ybuf, zbuf = self.last_pos()
-            dz = z - zbuf
-            dy = dz*math.cos( math.pi * (90-self.z_correction_angle)/180 )
-            y = y + dy
-
-        x,y,z = self.map_coordinates(x,y,z)
-        com = 'MOV '
+        xbuf, ybuf, zbuf = self.last_pos()
+        dx = None
+        dy = None
+        dz = None
         if x is not None:
-            if (x > 0) & (x < 200):
-                com += 'A ' + str(round(x, 4))
-                self._x.value = x
+            dx = x - xbuf
         if y is not None:
-            if (y > 0) & (y < 200):
-                if len(com) > 4:
-                    com += ' '
-                com += 'B ' + str(round(y, 4))
-                self._y.value = y
+            dy = y - ybuf
         if z is not None:
-            if (z > 0) & (z < 200):
-                if len(com) > 4:
-                    com += ' '
-                com += 'C ' + str(round(z, 4))
-                self._z.value = z
-        if len(com) > 4:
-            self._lock.acquire()
-            try:
-                self._sock.send(bytes(com + "\n",'UTF-8'))
-            except:
-                self._sock.close()
-                RuntimeError('Lost Connection to Controller')
-            finally:
-                self._lock.release()
+            dz = z - zbuf
+        self.moverel(dx,dy,dz)
+                    # if z is not None:
+        #     if y is None:
+        #         xbuf, y, zbuf = self.last_pos()
+        #     else:
+        #         xbuf, ybuf, zbuf = self.last_pos()
+        #     dz = z - zbuf
+        #     dy = dz*math.cos( math.pi * (90-self.z_correction_angle)/180 )
+        #     y = y + dy
+        #
+        # x,y,z = self.map_coordinates(x,y,z)
+        # com = 'MOV '
+        # if x is not None:
+        #     if (x > 0) & (x < 200):
+        #         com += 'A ' + str(round(x, 4))
+        #         self._x.value = x
+        # if y is not None:
+        #     if (y > 0) & (y < 200):
+        #         if len(com) > 4:
+        #             com += ' '
+        #         com += 'B ' + str(round(y, 4))
+        #         self._y.value = y
+        # if z is not None:
+        #     if (z > 0) & (z < 200):
+        #         if len(com) > 4:
+        #             com += ' '
+        #         com += 'C ' + str(round(z, 4))
+        #         self._z.value = z
+        # if len(com) > 4:
+        #     self._lock.acquire()
+        #     try:
+        #         self._sock.send(bytes(com + "\n",'UTF-8'))
+        #     except:
+        #         self._sock.close()
+        #         RuntimeError('Lost Connection to Controller')
+        #     finally:
+        #         self._lock.release()
         #self.query_pos()
 
     def moverel(self, dx=None, dy=None, dz=None):
